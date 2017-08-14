@@ -1,0 +1,124 @@
+= Shinken on Debian 9
+
+Test Shinken functionnalities and ease of use.
+
+Gather enough knowledge on the software to get a global idea of the feasabilty and cost of a migration from Centreon to Shinken, to address some of Centreon’s weakness (on scalability and distributed architecture).
+
+== Goals
+
+ - Run a standalone plateforme
+ - Visualization and aquittement WebUI (no Nagios configuration generation)
+ - Graphs
+ - https://github.com/naparuba/shinken/issues[Meet the community]
+ - Test few supervision plugins
+
+Shinken source from the official Git repository: https://github.com/naparuba/shinken[*github.com/naparuba/shinken*] that I’ve forked in https://github.com/M4rotte/shinken[*github.com/M4rotte/shinken*] for convenience.
+
+
+
+
+2017-08-14: last tagged release : 2.4.3
+
+== Pre-requisitories
+
+Not much.
+
+=== User shinken
+
+ - default settings (login should be disabled in a production environement (at least…))
+ - in group "staff" (not sure why… TODO: check if it’s really needed.)
+ 
+=== Create directories
+
+ - /etc/shinken
+ - /var/run/shinken
+ - /var/lib/shinken
+ - /var/log/shinken
+ - …
+ 
+Owner: shinken:shinken
+
+=== Debian packages 
+
+Debian extra-packages required that may not be installed yet:
+
+    # apt-get install git python-cherrypy python-pycurl python-pbr monitoring-plugins-basic python-setuptools mongodb python-pymongo \
+      libgraphite2-dev python-bottle python-passlib graphite-carbon
+
+=== Automatization
+
+The following script regroups the actions above :
+
+TODO: non-interactive adduser
+
+[source,bash]
+----
+#!/usr/bin/env bash
+
+adduser --quiet shinken
+adduser --quiet shinken staff
+
+SHKDIRS="/var/run/shinken /var/lib/shinken /etc/shinken /var/log/shinken"
+
+for d in $SHKDIRS; do
+
+  mkdir -p $d
+  chown shinken:shinken $d
+
+done
+
+apt-get install git python-cherrypy python-pycurl python-pbr monitoring-plugins-basic python-setuptools mongodb python-pymongo \
+      libgraphite2-dev python-bottle python-passlib graphite-carbon
+----
+
+== Install Shinken
+
+From the git repository : 
+
+    # python setup.py install
+    
+=== SSL
+
+We will use our own auto-signed certificate, so we start by deleting all files in /etc/shinken/certs.
+
+Then, in the directory */etc/shinken/certs*, as user "shinken" :
+
+1) Create files *openssl-ca.cnf*, *openssl-server.cnf*, *index* & *serial*, taking example on https://stackoverflow.com/questions/21297139/how-do-you-sign-certificate-signing-request-with-your-certification-authority
+
+2) Generate the CA certificate
+
+    $ openssl req -x509 -config openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out cacert.pem -outform PEM
+
+3) Generate a server key and a certificate signing request
+    
+    $ openssl req -config openssl-server.cnf -newkey rsa:2048 -sha256 -nodes -out servercert.csr -outform PEM
+
+4) Generate the signed server certificate
+
+    $ openssl ca -config openssl-ca.cnf -policy signing_policy -extensions signing_req -out servercert.pem -infiles servercert.csr
+    
+=== Modules
+
+    $ shinken --init
+    $ shinken install mod-mongodb
+    $ shinken install webui2
+    $ shinken install graphite2
+    $ shinken install ui-graphite2
+    $ shinken install retention-mongodb
+    
+=== Configuration
+
+ - SSL activation (no authentication in a first time)
+ - modules activation
+ - modify the password of the "admin" contact
+
+=== Nginx 
+
+Nginx is used as reverse proxy.
+
+https://github.com/shinken-monitoring/mod-webui/wiki/Frontend-Web-server
+
+== Ressources
+
+ - https://wiki.monitoring-fr.org/shinken/shinken-advanced-architecture[Advanced architecture]
+

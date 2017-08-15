@@ -118,6 +118,18 @@ Nginx is used as reverse proxy.
 
 https://github.com/shinken-monitoring/mod-webui/wiki/Frontend-Web-server
 
+=== MongoDB
+
+MongoDB is used by the scheduler for status retention and WebUI user profile modules.
+
+I didn’t manage to make Shinken happy with a SSL MongoDB service… so we don’t use SSL for communication between the scheduler and the mongodb server.
+
+I’m not sure if it’s possible to use SSL for those modules. If it’s not, the best bet is probably to have the MongoDB service running on the same host than the Shinken scheduler, and dedicated to it.
+
+=== LDAP
+
+TODO
+
 == Ressources
 
  - https://wiki.monitoring-fr.org/shinken/shinken-advanced-architecture[Advanced architecture]

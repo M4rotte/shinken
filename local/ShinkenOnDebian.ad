@@ -1,4 +1,12 @@
 = Shinken on Debian 9
+Stéphane THOMAS <stephane.thomas@sihm.fr>
+v0.1, 2017-08-15
+:lang: en
+:data-uri:
+:icons:
+:toc:
+:imagesdir: SqueezeCentreon
+:iconsdir: /etc/asciidoc/images/icons/
 
 Test Shinken functionnalities and ease of use.
 
@@ -12,9 +20,7 @@ Gather enough knowledge on the software to get a global idea of the feasabilty a
  - https://github.com/naparuba/shinken/issues[Meet the community]
  - Test few supervision plugins
 
-Shinken source from the official Git repository: https://github.com/naparuba/shinken[*github.com/naparuba/shinken*] that I’ve forked in https://github.com/M4rotte/shinken[*github.com/M4rotte/shinken*] for convenience.
-
-
+Shinken source from the official Git repository: https://github.com/naparuba/shinken[*github.com/naparuba/shinken*], forked in https://github.com/M4rotte/shinken[*github.com/M4rotte/shinken*] for convenience.
 
 
 2017-08-14: last tagged release : 2.4.3
@@ -51,25 +57,7 @@ The following script regroups the actions above :
 
 TODO: non-interactive adduser
 
-[source,bash]
-----
-#!/usr/bin/env bash
 
-adduser --quiet shinken
-adduser --quiet shinken staff
-
-SHKDIRS="/var/run/shinken /var/lib/shinken /etc/shinken /var/log/shinken"
-
-for d in $SHKDIRS; do
-
-  mkdir -p $d
-  chown shinken:shinken $d
-
-done
-
-apt-get install git python-cherrypy python-pycurl python-pbr monitoring-plugins-basic python-setuptools mongodb python-pymongo \
-      libgraphite2-dev python-bottle python-passlib graphite-carbon
-----
 
 == Install Shinken
 

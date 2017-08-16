@@ -55,8 +55,11 @@ Debian extra-packages required that may not be installed yet:
 
 The following script regroups the actions above :
 
-TODO: non-interactive adduser
+https://raw.githubusercontent.com/M4rotte/shinken/local/local/PrepareDebianForShinken.sh[PrepareDebianForShinken.sh]
 
+This other script purges all Shinken installed files and directories (configuration included)
+
+https://raw.githubusercontent.com/M4rotte/shinken/local/local/PurgeShinken.sh[PurgeShinken.sh]
 
 
 == Install Shinken
